@@ -6,6 +6,11 @@ import Screen3 from './screens/Screen3';
 import Screen4 from './screens/Screen4';
 import SideDrawer from './screens/SideDrawer';
 import LoginScreen from './screens/LoginScreen';
+import Welcome from './screens/Welcome';
+import Register from './screens/Register';
+import ForgetPassword from './screens/ForgetPassword';
+import Home from './screens/Home';
+// import MainScreen from './screens/MainScreen';
 
 export default () => {
     Navigation.registerComponent('Screen1', () => Screen1);
@@ -14,52 +19,16 @@ export default () => {
     Navigation.registerComponent('Screen4', () => Screen4);
     Navigation.registerComponent('SideDrawer', () => SideDrawer);
     Navigation.registerComponent('LoginScreen', () => LoginScreen);
-
-    //Navigation.startTabBasedApp({
-    //    tabs: [
-    //        {
-    //            label: 'One',
-    //            screen: 'Screen1',
-    //            icon: require('./images/icon1.png'),
-    //            selectedIcon: require('./images/icon1_selected.png'),
-    //            title: 'Screen One',
-    //            navigatorButtons: {
-    //                leftButtons: [
-    //                    {
-    //                        icon: require('./images/menu_icon.png'),
-    //                        title: "Menu",
-    //                        id: "sideDrawerToggle"
-    //                    }
-    //                ]
-    //            }
-    //        },
-    //        {
-    //            label: 'Two',
-    //            screen: 'Screen2',
-    //            icon: require('./images/icon2.png'),
-    //            selectedIcon: require('./images/icon2_selected.png'),
-    //            title: 'Screen Two',
-    //            navigatorButtons: {
-    //                leftButtons: [
-    //                    {
-    //                        icon: require('./images/menu_icon.png'),
-    //                        title: "Menu",
-    //                        id: "sideDrawerToggle"
-    //                    }
-    //                ]
-    //            }
-    //        }
-    //    ],
-    //    drawer: {
-    //        left: {
-    //            screen: "SideDrawer"
-    //        }
-    //    }
-    //});
+    Navigation.registerComponent('Welcome', () => Welcome);
+    Navigation.registerComponent('Register', () => Register);
+    Navigation.registerComponent('ForgetPassword', () => ForgetPassword);
+    // Navigation.registerComponent('MainScreen', () => MainScreen);
+    Navigation.registerComponent('Home', () => Home);
+    
     Navigation.startSingleScreenApp({
         screen: {
-            screen: "LoginScreen",
-            title: "Login"
+            screen: "Welcome",
+            navigatorStyle: { navBarHidden: true },
         }
     });
 };
