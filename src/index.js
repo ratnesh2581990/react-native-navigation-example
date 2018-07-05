@@ -10,6 +10,7 @@ import Welcome from './screens/Welcome';
 import Register from './screens/Register';
 import ForgetPassword from './screens/ForgetPassword';
 import Home from './screens/Home';
+import Profile from './screens/Profile';
 // import MainScreen from './screens/MainScreen';
 
 export default () => {
@@ -24,6 +25,7 @@ export default () => {
     Navigation.registerComponent('ForgetPassword', () => ForgetPassword);
     // Navigation.registerComponent('MainScreen', () => MainScreen);
     Navigation.registerComponent('Home', () => Home);
+    Navigation.registerComponent('Profile', () => Profile);
     
     Navigation.startSingleScreenApp({
         screen: {
