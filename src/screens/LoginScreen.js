@@ -4,27 +4,96 @@ import { Container, Content, Button, Text, Form, Item, Label, Input, Footer  } f
 import startMainTabs from './startMainTabs';
 
 class LoginScreen extends Component {
+    constructor(props){
+        super(props);
+        this.state = {
+            Phone: '',
+            inValidPhone: false,
+            Password: '',
+            inValidPhoneMsg: null,
+        };
+    }
     handlelogin = () => {
-        startMainTabs();
+        const {
+            Phone,
+            Password,
+        } = this.state;
+        fetch('https://protected-river-76442.herokuapp.com/users/applogin', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body:JSON.stringify({
+                phonenumber: Phone,
+                password: Password,
+                role: 'appUser'
+            }),
+        }).then((response) => response.json())
+            .then((responseJson) => {
+                console.log('success', responseJson);
+                this.setState({registered: true});
+                startMainTabs();
+            })
+            .catch((error) => {
+                console.error('error', error);
+                this.setState({regErr: error});
+            });
+        
     };
 
+    
+    validation = ()=>{
+        const {
+            inValidPhone,
+        } = this.state;
+
+        var phoneVarify = /^\d{10}$/;
+        
+        if(this.state.Phone != ''){
+            phoneVarify.test(this.state.Phone) ? this.setState({inValidPhone: false, inValidPhoneMsg: null}) : this.setState({inValidPhone: true, inValidPhoneMsg: 'Phone no. is invalid'});
+        }else{
+            phoneVarify.test(this.state.Phone) ? this.setState({inValidPhone: false, inValidPhoneMsg: null}) : this.setState({inValidPhone: true, inValidPhoneMsg: 'Please Enter Your Phone no.'});
+        }
+
+        if( !inValidPhone ){
+            this.handlelogin();
+        }else{
+            // Alert.alert(
+            //     'Error',
+            //     'Ph',
+            //     [
+            //       {text: 'OK', onPress: () => console.log('OK Pressed')},
+            //     ],
+            //     { cancelable: true }
+            // )
+        }
+
+    }
+
     render() {
+        const {
+            Phone, 
+            Password,
+            inValidPhoneMsg
+        } = this.state
         return (
             <Container>
             <Content >
                 <Form>
                     <Item floatingLabel>
-                        <Label>Phone or Email</Label>
-                        <Input />
+                        <Label>Phone</Label>
+                        <Input keyboardType={'numeric'} maxLength={10} value={Phone} onChangeText={value=>this.setState({Phone: value})} />
                     </Item>
+                    <Text style={style.errMsg}>{inValidPhoneMsg}</Text>
                     <Item floatingLabel>
                         <Label>Password</Label>
-                        <Input />
+                        <Input  secureTextEntry={true} value={Password} onChangeText={value=>this.setState({Password: value})}  />
                     </Item>
                 </Form>  
                 <View style={style.btnView} >
                     <Button block rounded
-                        onPress={this.handlelogin}
+                        onPress={this.validation}
                     >
                         <Text>
                             Login
@@ -73,6 +142,11 @@ const style = {
     doubleBtn: {
         flexDirection: 'row',
         justifyContent: 'space-between',
+    },
+    errMsg: {
+        paddingLeft: 15,
+        fontSize: 12,
+        color: 'red'
     }
 }
 

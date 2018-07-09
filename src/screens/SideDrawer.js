@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Dimensions, StyleSheet, TouchableOpacity, TouchableHighlight } from "react-native";
+import { View, Dimensions, StyleSheet, TouchableOpacity, TouchableNativeFeedback } from "react-native";
 import { Button, Icon , Text } from 'native-base';
 import App from "../index";
 
@@ -15,26 +15,22 @@ class SideDrawer extends Component {
           { width: Dimensions.get("window").width * 0.8 }
         ]}
       >
-        <Button block transparent
-          onPress={this.handlelogout}
-          style={{ width: 200, padding: 10 }}
-        >
+        <TouchableNativeFeedback onPress={this.handlelogout} style={styles.sliderMenus}>
           <Text style={{ color: 'black' }}>Logout</Text>
-       </Button>
-       <Button block transparent
-        onPress={
-          ()=>{
+        </TouchableNativeFeedback>
+        <TouchableNativeFeedback onPress={ ()=>{
           this.props.navigator.push({
             screen: 'Profile',
             navigatorStyle: { navBarHidden: true },
           });
           this.props.navigator.toggleDrawer();
-          }
-        }
-       >
-          <Icon name='arrow-back' />
-          <Text>Profile</Text>
-       </Button>
+          }}
+          style={styles.sliderMenus}
+          >
+          <Text>
+            <Icon name='arrow-back' /> Profile
+          </Text>
+       </TouchableNativeFeedback>
       </View>
     );
   }
@@ -45,6 +41,9 @@ const styles = StyleSheet.create({
     paddingTop: 22,
     backgroundColor: "white",
     flex: 1
+  },
+  sliderMenus:{
+    padding: 20 
   }
 });
 
