@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { View, Image, } from 'react-native';
+import { View, Image, Alert } from 'react-native';
 import { Container, Content, Button, Text, Form, Item, Label, Input, Footer  } from 'native-base';
 import startMainTabs from './startMainTabs';
+import MainScreen from './MainScreen';
 
 class LoginScreen extends Component {
     constructor(props){
@@ -11,6 +12,7 @@ class LoginScreen extends Component {
             inValidPhone: false,
             Password: '',
             inValidPhoneMsg: null,
+            errMsgText: '',
         };
     }
     handlelogin = () => {
@@ -33,7 +35,21 @@ class LoginScreen extends Component {
             .then((responseJson) => {
                 console.log('success', responseJson);
                 this.setState({registered: true});
-                startMainTabs();
+                if(responseJson.success){
+                    MainScreen();
+                }else{
+                    this.setState({errMsgText: responseJson.message });
+                    console.log(this.state.errMsgText);
+                    Alert.alert(
+                        'Error',
+                        this.state.errMsgText,
+                        [
+                            {text: 'OK', onPress: () => console.log('OK Pressed')},
+                        ],
+                        { cancelable: true }
+                    )
+                }
+
             })
             .catch((error) => {
                 console.error('error', error);
@@ -53,10 +69,10 @@ class LoginScreen extends Component {
         if(this.state.Phone != ''){
             phoneVarify.test(this.state.Phone) ? this.setState({inValidPhone: false, inValidPhoneMsg: null}) : this.setState({inValidPhone: true, inValidPhoneMsg: 'Phone no. is invalid'});
         }else{
-            phoneVarify.test(this.state.Phone) ? this.setState({inValidPhone: false, inValidPhoneMsg: null}) : this.setState({inValidPhone: true, inValidPhoneMsg: 'Please Enter Your Phone no.'});
+            this.setState({inValidPhone: true, inValidPhoneMsg: 'Please Enter Your Phone no.'});
         }
 
-        if( !inValidPhone ){
+        if( !inValidPhone  && this.state.Phone != ''){
             this.handlelogin();
         }else{
             // Alert.alert(

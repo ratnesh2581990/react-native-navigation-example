@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, Image, Alert } from 'react-native';
-import { Container, Content, Button, Text, Form, Item, Label, Input, Footer, Toast  } from 'native-base';
+import { Container, Content, Button, Text, Form, Item, Label, Input, Footer, Spinner} from 'native-base';
 import MainScreen from './MainScreen';
 
 export default class Register extends Component {
@@ -27,27 +27,15 @@ export default class Register extends Component {
             inValidPhoneMsg: null,
             inValidPasswordMsg: null,
             inValidConfirmPasswordMsg: null,
-            valid: false
+            valid: false,
+            loading: false,
         }
     }
     
     handlelogin = () => {
         
-        console.log(Toast);
-        
         this.regiserUser();
-        if(this.state.registered){
-            MainScreen();
-        }else{
-            Alert.alert(
-                'Error',
-                this.state.regErr,
-                [
-                  {text: 'OK', onPress: () => console.log('OK Pressed')},
-                ],
-                { cancelable: true }
-            )
-        }
+        
     };
     validation = ()=>{
         const {
@@ -57,27 +45,34 @@ export default class Register extends Component {
             inValidPassword,
             inValidConfirmPassword
         } = this.state
+        this.setState({loading: true});
         var emailVarify = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
         var phoneVarify = /^\d{10}$/;
         this.state.Name != '' ? this.setState({inValidName: false, inValidNameMsg: null}) : this.setState({inValidName: true, inValidNameMsg: 'Please Enter Your Name'});
         if(this.state.Email != ''){
             emailVarify.test(this.state.Email) ? this.setState({inValidEmail: false, inValidEmailMsg: null }) : this.setState({inValidEmail: true, inValidEmailMsg: 'Email is invalid'});
         }else{
-            emailVarify.test(this.state.Email) ? this.setState({inValidEmail: false, inValidEmailMsg: null }) : this.setState({inValidEmail: true, inValidEmailMsg: 'Please Enter Your Email'});
+           this.setState({inValidEmail: true, inValidEmailMsg: 'Please Enter Your Email'});
         }
 
         if(this.state.Phone != ''){
             phoneVarify.test(this.state.Phone) ? this.setState({inValidPhone: false, inValidPhoneMsg: null}) : this.setState({inValidPhone: true, inValidPhoneMsg: 'Phone no. is invalid'});
         }else{
-            phoneVarify.test(this.state.Phone) ? this.setState({inValidPhone: false, inValidPhoneMsg: null}) : this.setState({inValidPhone: true, inValidPhoneMsg: 'Please Enter Your Phone no.'});
+            this.setState({inValidPhone: true, inValidPhoneMsg: 'Please Enter Your Phone no.'});
         }
         
         this.state.Password.length > 5 ? this.setState({inValidPassword: false, inValidPasswordMsg: null}) : this.setState({inValidPassword: true, inValidPasswordMsg: 'Password Must Content min 6 character'});
-        (this.state.ConfirmPassword === this.state.Password && !inValidPassword) ? this.setState({inValidConfirmPassword: false, inValidConfirmPasswordMsg: null}) : this.setState({inValidConfirmPassword: true, inValidConfirmPasswordMsg: "Password didn't Matched"});
 
-        if(!inValidName && !inValidEmail && !inValidPhone && !inValidPassword && inValidConfirmPassword){
+        if(this.state.ConfirmPassword != ''){
+            this.state.ConfirmPassword === this.state.Password ? this.setState({inValidConfirmPassword: false, inValidConfirmPasswordMsg: null}) : this.setState({inValidConfirmPassword: true, inValidConfirmPasswordMsg: "Password didn't Matched"});
+        }else{
+            this.setState({inValidConfirmPassword: true});
+        }
+
+        if(!inValidName && !inValidEmail && !inValidPhone && !inValidPassword && !inValidConfirmPassword){
             this.handlelogin();
         }else{
+            this.setState({loading: false});
             Alert.alert(
                 'Error',
                 'Fill all the details',
@@ -117,7 +112,24 @@ export default class Register extends Component {
         }).then((response) => response.json())
             .then((responseJson) => {
                 console.log('success', responseJson);
-                this.setState({registered: true});
+                this.setState({loading: false});
+                if(responseJson.success){
+                    this.setState({registered: true});
+                    MainScreen();
+                }else{
+                    this.setState({registered: false});
+                    this.setState({regErr: responseJson.message });
+                    console.log(this.state.regErr);
+                    Alert.alert(
+                        'Error',
+                        this.state.regErr,
+                        [
+                            {text: 'OK', onPress: () => console.log('OK Pressed')},
+                        ],
+                        { cancelable: true }
+                    )
+                }
+
             })
             .catch((error) => {
                 console.error('error', error);
@@ -173,6 +185,9 @@ export default class Register extends Component {
                     </Item>
                     <Text style={style.errMsg}>{inValidConfirmPasswordMsg}</Text>
                 </Form>  
+                {this.state.loading ? <Spinner /> : <View /> }
+                
+
                 <View style={style.btnView} >
                     <Button block rounded 
                     onPress={()=>{
