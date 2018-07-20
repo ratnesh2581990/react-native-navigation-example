@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, Image, Alert } from 'react-native';
-import { Container, Content, Button, Text, Form, Item, Label, Input, Footer  } from 'native-base';
+import { Container, Content, Button, Text, Form, Item, Label, Input, Footer, Spinner  } from 'native-base';
 import startMainTabs from './startMainTabs';
 import MainScreen from './MainScreen';
 
@@ -13,9 +13,11 @@ class LoginScreen extends Component {
             Password: '',
             inValidPhoneMsg: null,
             errMsgText: '',
+            loading: false,
         };
     }
     handlelogin = () => {
+        
         const {
             Phone,
             Password,
@@ -34,7 +36,7 @@ class LoginScreen extends Component {
         }).then((response) => response.json())
             .then((responseJson) => {
                 console.log('success', responseJson);
-                this.setState({registered: true});
+                this.setState({registered: true, loading: true});
                 if(responseJson.success){
                     MainScreen();
                 }else{
@@ -63,7 +65,6 @@ class LoginScreen extends Component {
         const {
             inValidPhone,
         } = this.state;
-
         var phoneVarify = /^\d{10}$/;
         
         if(this.state.Phone != ''){
@@ -73,6 +74,7 @@ class LoginScreen extends Component {
         }
 
         if( !inValidPhone  && this.state.Phone != ''){
+            this.setState({loading: true});
             this.handlelogin();
         }else{
             // Alert.alert(
@@ -107,6 +109,7 @@ class LoginScreen extends Component {
                         <Input  secureTextEntry={true} value={Password} onChangeText={value=>this.setState({Password: value})}  />
                     </Item>
                 </Form>  
+                {this.state.loading ? <Spinner /> : <View /> }
                 <View style={style.btnView} >
                     <Button block rounded
                         onPress={this.validation}
